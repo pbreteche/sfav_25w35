@@ -2,6 +2,7 @@
 
 namespace App\EventListener;
 
+use App\Constants;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 
@@ -14,12 +15,10 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 #[AsEventListener(priority: 32)]
 final class AcceptLanguageListener
 {
-    public const MANAGED_LOCALE = ['en', 'fr'];
-
     public function __invoke(RequestEvent $event): void
     {
         $request = $event->getRequest();
-        $preferredLocale = $request->getPreferredLanguage(self::MANAGED_LOCALE);
+        $preferredLocale = $request->getPreferredLanguage(Constants::MANAGED_LOCALE);
 
         if ($preferredLocale) {
             $request->setLocale($preferredLocale);

@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\Cache;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -45,6 +48,36 @@ class DefaultController extends AbstractController
 
         return $this->render('default/index.html.twig', [
             'data' => $cachedData,
+        ]);
+    }
+
+    #[Route('/mail')]
+    public function mailSomething(
+        MailerInterface $mailer,
+    ): Response {
+        $tos = [
+            new Address('username@example.com', 'John Doe'),
+            new Address('othername@example.com', 'Jane Doe'),
+            'anameagain@example.com',
+        ];
+
+        $message = new TemplatedEmail()
+            ->htmlTemplate('default/email/email.html.twig')
+            ->context([
+                'name' => 'Your name',
+                'date' => 'tomorrow'
+            ])
+            ->to(...$tos)
+            ->subject('Your subject')
+            ->cc('copyto@ewample.com')
+            ->bcc('blindcopy@example.com')
+            ->from('noreply@example.com')
+        ;
+
+        $mailer->send($message);
+
+        return $this->render('default/index.html.twig', [
+            'data' => null,
         ]);
     }
 }

@@ -13,12 +13,16 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
  * → Notre priorité doit donc être strictement supérieur à 16
  */
 #[AsEventListener(priority: 32)]
-final class AcceptLanguageListener
+final readonly class AcceptLanguageListener
 {
+    public function __construct(private array $managedLocales)
+    {
+    }
+
     public function __invoke(RequestEvent $event): void
     {
         $request = $event->getRequest();
-        $preferredLocale = $request->getPreferredLanguage(Constants::MANAGED_LOCALE);
+        $preferredLocale = $request->getPreferredLanguage($this->managedLocales);
 
         if ($preferredLocale) {
             $request->setLocale($preferredLocale);

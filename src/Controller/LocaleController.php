@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Event\ExampleEvent;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,6 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 #[Route('/locale')]
 class LocaleController extends AbstractController
@@ -20,6 +22,7 @@ class LocaleController extends AbstractController
     public function set(
         Request $request,
         ValidatorInterface $validator,
+        EventDispatcherInterface $dispatcher,
     ): Response {
         $locale = $request->request->get('locale');
         $violations = $validator->validate($locale, [
@@ -29,6 +32,13 @@ class LocaleController extends AbstractController
 
         if (0 === $violations->count()) {
             $request->getSession()->set('locale', $locale);
+
+            // Exemple pour montrer la syntaxe.
+            // L'utilisation d'événements personnalisés sera intéressant dans le cadre
+            // de code partagé entre plusieurs applications.
+            $event = new ExampleEvent('Le titre');
+            $dispatcher->dispatch($event);
+
 
             return $this->redirectToRoute('app_default_index');
         }

@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Part\DataPart;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -61,6 +62,14 @@ class DefaultController extends AbstractController
             'anameagain@example.com',
         ];
 
+        $csvFile = fopen('php://temp', 'r+');
+        fputcsv($csvFile, ['apple', 'green', 35]);
+        fputcsv($csvFile, ['banana', 'yellow', 12]);
+        fputcsv($csvFile, ['cherry', 'red', 85]);
+        rewind($csvFile);
+        $csvFileContent = stream_get_contents($csvFile);
+        fclose($csvFile);
+
         $message = new TemplatedEmail()
             ->htmlTemplate('default/email/email.html.twig')
             ->context([
@@ -72,6 +81,8 @@ class DefaultController extends AbstractController
             ->cc('copyto@ewample.com')
             ->bcc('blindcopy@example.com')
             ->from('noreply@example.com')
+            ->attach($csvFileContent, 'fruits.csv', 'text/csv')
+            ->addPart(new DataPart($csvFileContent, 'fruits.csv', 'text/csv'))
         ;
 
         $mailer->send($message);

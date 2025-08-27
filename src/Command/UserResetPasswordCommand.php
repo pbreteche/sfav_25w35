@@ -13,6 +13,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
+use Symfony\Component\Validator\Constraints\PasswordStrength;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsCommand(
     name: 'app:user:reset-password',
@@ -24,6 +27,7 @@ class UserResetPasswordCommand extends Command
         private UserRepository $userRepository,
         private UserPasswordHasherInterface $passwordHasher,
         private EntityManagerInterface $entityManager,
+        private ValidatorInterface $validator,
     )
     {
         parent::__construct();
@@ -55,6 +59,19 @@ class UserResetPasswordCommand extends Command
         }
 
         $password = $io->askHidden('Mot de passe');
+
+        $violations = $this->validator->validate($password, [
+            new PasswordStrength(),
+            new NotCompromisedPassword(),
+        ]);
+
+        if (0 < $violations->count()) {
+            foreach ($violations as $violation) {
+                $io->error($violation->getMessage());
+            }
+
+            return Command::FAILURE;
+        }
 
         $user->setPassword($this->passwordHasher->hashPassword($user, $password));
         $this->entityManager->flush();

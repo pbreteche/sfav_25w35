@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
@@ -40,7 +41,11 @@ class UserResetPasswordCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $username = $io->ask('Indiquer un nom d\'utilisateur');
+        $question = new Question('Indiquer un nom d\'utilisateur');
+        $question->setAutocompleterCallback(
+            fn (string $userInput): array => $this->userRepository->autocompleteUsernames($userInput)
+        );
+        $username = $io->askQuestion($question);
         $user = $this->userRepository->findOneBy(['email' => $username]);
 
         if (!$user) {

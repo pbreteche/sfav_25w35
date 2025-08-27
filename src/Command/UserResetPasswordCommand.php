@@ -38,7 +38,7 @@ class UserResetPasswordCommand extends Command
     {
         $this
             ->addArgument('username', InputArgument::OPTIONAL, 'Username for user to reset password')
-            ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
+            ->addOption('temp', 't', InputOption::VALUE_NONE, 'User will be forced to change this password at the first connexion')
         ;
     }
 
@@ -86,6 +86,9 @@ class UserResetPasswordCommand extends Command
         }
 
         $user->setPassword($this->passwordHasher->hashPassword($user, $password));
+        if ($input->getOption('temp')) {
+            // mark user to change password
+        }
         $this->entityManager->flush();
 
         return Command::SUCCESS;

@@ -13,6 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\Validator\Constraints\NotCompromisedPassword;
 use Symfony\Component\Validator\Constraints\PasswordStrength;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -36,7 +37,7 @@ class UserResetPasswordCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('arg1', InputArgument::OPTIONAL, 'Argument description')
+            ->addArgument('username', InputArgument::OPTIONAL, 'Username for user to reset password')
             ->addOption('option1', null, InputOption::VALUE_NONE, 'Option description')
         ;
     }
@@ -45,11 +46,15 @@ class UserResetPasswordCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        $question = new Question('Indiquer un nom d\'utilisateur');
-        $question->setAutocompleterCallback(
-            fn (string $userInput): array => $this->userRepository->autocompleteUsernames($userInput)
-        );
-        $username = $io->askQuestion($question);
+        $username = $input->getArgument('username');
+
+        if (!$username) {
+            $question = new Question('Indiquer un nom d\'utilisateur');
+            $question->setAutocompleterCallback(
+                fn(string $userInput): array => $this->userRepository->autocompleteUsernames($userInput)
+            );
+            $username = $io->askQuestion($question);
+        }
         $user = $this->userRepository->findOneBy(['email' => $username]);
 
         if (!$user) {
@@ -60,10 +65,17 @@ class UserResetPasswordCommand extends Command
 
         $password = $io->askHidden('Mot de passe');
 
+        $sw = new Stopwatch();
+
+        $sw->start('validation');
         $violations = $this->validator->validate($password, [
             new PasswordStrength(),
             new NotCompromisedPassword(),
         ]);
+        $event = $sw->stop('validation');
+        if ($output->isVerbose()) {
+            $io->info('Validation time: '.$event->getDuration().' ms.');
+        }
 
         if (0 < $violations->count()) {
             foreach ($violations as $violation) {

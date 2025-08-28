@@ -19,7 +19,7 @@ class PostType extends AbstractType
             ->add('state', EnumType::class, [
                 'class' => PostState::class,
             ])
-            ->add('range', DateRangeType::class)
+            ->add('range') // Le type de champ est maintenant "deviné" via le TypeGuesser
         ;
     }
 

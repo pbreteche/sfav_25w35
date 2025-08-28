@@ -1,11 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    {{ form_start(form) }}
-    {{ form_errors(form) }}
-    {{ form_widget(form) }}
-    <button class="btn btn-primary">Submit</button>
-    {{ form_end(form) }}
+    {{ include('post/_form.html.twig') }}
 
     {#
         {{ form(form) }} affiche tout le formulaire

@@ -38,4 +38,25 @@ class PostController extends AbstractController
             'form' => $form,
         ]);
     }
+
+    #[Route('/edit/{id<\d+>}', methods: ['GET', 'POST'])]
+    public function edit(
+        Post $post,
+        Request $request,
+        EntityManagerInterface $manager
+    ): Response {
+        $form = $this->createForm(PostType::class, $post);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $post->setUpdatedAt(new \DateTimeImmutable());
+            $manager->flush();
+
+            return $this->redirectToRoute('app_post_new');
+        }
+
+        return $this->render('post/edit.html.twig', [
+            'form' => $form,
+        ]);
+    }
 }

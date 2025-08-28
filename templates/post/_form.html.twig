@@ -1,0 +1,5 @@
+{{ form_start(form) }}
+    {{ form_errors(form) }}
+    {{ form_widget(form) }}
+<button class="btn btn-primary">{{ action | default('Submit') }}</button>
+{{ form_end(form) }}

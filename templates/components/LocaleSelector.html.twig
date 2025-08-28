@@ -4,9 +4,10 @@
         <select name="locale" id="locale_locale" class="form-control">
             {% for locale in this.managedLocales %}
                 {# ajout composer de twig/extra-bundle et twig/intl-extra #}
-                <option value="{{ locale }}">{{ locale | locale_name }}</option>
+                <option value="{{ locale }}">{{ locale | locale_name(locale) }}</option>
             {% endfor %}
         </select>
-        <button class="btn btn-primary">valider</button>
+        <p>{{ 'now' | format_date }}</p>
+        <button class="btn {{ this.buttonClass }}">valider</button>
     </form>
 </div>

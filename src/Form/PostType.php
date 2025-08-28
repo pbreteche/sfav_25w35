@@ -19,6 +19,7 @@ class PostType extends AbstractType
             ->add('state', EnumType::class, [
                 'class' => PostState::class,
             ])
+            ->add('range', DateRangeType::class)
         ;
     }
 

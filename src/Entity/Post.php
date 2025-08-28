@@ -31,8 +31,13 @@ class Post
     #[ORM\Column(enumType: PostState::class)]
     private PostState $state = PostState::Draft;
 
-    #[ORM\Column(type: DateRangeType::TYPE)]
+    #[ORM\Column(name: 'date_range', type: DateRangeType::TYPE)]
     private ?DateRange $range = null;
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {
@@ -66,13 +71,6 @@ class Post
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
     }
 
     public function getUpdatedAt(): ?\DateTimeImmutable

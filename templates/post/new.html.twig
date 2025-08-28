@@ -6,4 +6,20 @@
     {{ form_widget(form) }}
     <button class="btn btn-primary">Submit</button>
     {{ form_end(form) }}
+
+    {#
+        {{ form(form) }} affiche tout le formulaire
+        {{ form_row(form.title) }} affiche tous les éléments relatifs au champ title
+        regroupe :
+          * form_label(form.title)
+          * form_errors(form.title)
+          * form_help(form.title)
+          * form_widget(form.title)
+
+        form_start, form_rest, form_end
+
+        les blocks correspondant sont utilisé depuis le theme de formulaire sélectionné
+        https://symfony.com/doc/current/form/form_themes.html#form-fragment-naming
+
+    #}
 {% endblock %}

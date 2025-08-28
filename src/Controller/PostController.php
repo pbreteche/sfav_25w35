@@ -49,7 +49,6 @@ class PostController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $post->setUpdatedAt(new \DateTimeImmutable());
             $manager->flush();
 
             return $this->redirectToRoute('app_post_new');

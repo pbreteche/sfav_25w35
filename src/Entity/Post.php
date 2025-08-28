@@ -7,6 +7,7 @@ use App\Repository\PostRepository;
 use App\Type\DateRangeType;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: PostRepository::class)]
 class Post
@@ -23,9 +24,10 @@ class Post
     private ?string $body = null;
 
     #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?\DateTimeImmutable $createdAt;
 
     #[ORM\Column(nullable: true)]
+    #[Gedmo\Timestampable]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(enumType: PostState::class)]

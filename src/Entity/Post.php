@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
+use App\DateRange;
 use App\Repository\PostRepository;
+use App\Type\DateRangeType;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -28,6 +30,9 @@ class Post
 
     #[ORM\Column(enumType: PostState::class)]
     private PostState $state = PostState::Draft;
+
+    #[ORM\Column(type: DateRangeType::TYPE)]
+    private ?DateRange $range = null;
 
     public function getId(): ?int
     {
@@ -90,6 +95,18 @@ class Post
     public function setState(PostState $state): static
     {
         $this->state = $state;
+
+        return $this;
+    }
+
+    public function getRange(): ?DateRange
+    {
+        return $this->range;
+    }
+
+    public function setRange(?DateRange $range): static
+    {
+        $this->range = $range;
 
         return $this;
     }

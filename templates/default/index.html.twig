@@ -10,4 +10,15 @@
     {{ dump(app.locale) }}
     <h1>Démo locale</h1>
     <p>{{ data }}</p>
+
+    <div data-controller="sign">
+        <form method="post" data-action="formdata->sign#submit">
+            <div>
+                <label for="sign-pad" class="form-label">Signature</label>
+                <canvas id="sign-pad" data-sign-target="pad"></canvas>
+            </div>
+            <button>Enregistrer</button>
+        </form>
+    </div>
+
 {% endblock %}

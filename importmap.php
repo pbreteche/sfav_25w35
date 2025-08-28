@@ -35,4 +35,7 @@ return [
         'version' => '5.3.8',
         'type' => 'css',
     ],
+    'signature_pad' => [
+        'version' => '5.0.10',
+    ],
 ];

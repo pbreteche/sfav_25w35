@@ -12,16 +12,7 @@
         {% endblock %}
     </head>
     <body>
-    <form action="{{ path('app_locale_set') }}" method="post">
-        <label for="locale_locale">Langue</label>
-        <select name="locale" id="locale_locale">
-            {% for locale in managed_locales %}
-                {# ajout composer de twig/extra-bundle et twig/intl-extra #}
-                <option value="{{ locale }}">{{ locale | locale_name }}</option>
-            {% endfor %}
-        </select>
-        <button>valider</button>
-    </form>
+        <twig:LocaleSelector />
         {% block body %}{% endblock %}
     </body>
 </html>
